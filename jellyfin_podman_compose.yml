@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  myjellyfin:
+    image: docker.io/jellyfin/jellyfin:latest
+    container_name: myjellyfin
+    user: "${UID}:${GID}" # Replace 1000:1000 with the output of $(id -u):$(id -g)
+    ports:
+      - "8096:8096"
+    labels:
+      - "io.containers.autoupdate=registry"
+    volumes:
+      - jellyfin-cache:/cache:Z
+      - jellyfin-config:/config:Z
+      - /path/to/media:/media:ro # Added ro for read-only
+    tmpfs: 
+      - /run
+      - /tmp
+    environment:
+      - UID="${UID}" # Replace 1000 with the output of $(id -u)
+      - GID="${GID}" # Replace 1000 with the output of $(id -g)
+    restart: unless-stopped
+
+volumes:
+  jellyfin-cache:
+    external: true
+  jellyfin-config:
+    external: true
